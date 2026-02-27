@@ -67,18 +67,13 @@ public class PlayerController : MonoBehaviour
         // Cache component references
         moveController = GetComponent<AdvancedMoveController>();
         rb = GetComponent<Rigidbody>();
-        //CameraFollower = GetComponentInChildren<ThirdPersonCamera>();
+        CameraFollower = GetComponentInChildren<ThirdPersonCamera>();
         characterAnimator = GetComponentInChildren<Animator>();
         healthComponent = GetComponent<HealthController>();
 
-        if (CameraFollower)
+        if (CameraFollower != null)
         {
-            if (playerInput.camera == null) {
-                //Debug.Log(actions["Jump"].GetBindingDisplayString());
-                playerInput.camera = CameraFollower.GetComponent<Camera>();
-            }
-            CameraFollower.transform.SetParent(transform.parent);
-            //DontDestroyOnLoad(CameraFollower.gameObject);
+            CameraFollower.SetTarget(transform);
         }
 
         DontDestroyOnLoad(gameObject);
@@ -93,7 +88,7 @@ public class PlayerController : MonoBehaviour
         }
         CheckpointManager.TeleportPlayerToCheckpoint(gameObject);
 
-        if(players.IndexOf(this) != 0) enabled = false;
+        //if(players.IndexOf(this) != 0) enabled = false;
     }
 
     /// <summary>

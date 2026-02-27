@@ -1,12 +1,13 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerSwapManager : MonoBehaviour
 {
     public GameObject playerPrefab;
     public static int activePlayerIndex { get; private set; }
 
-    private static ThirdPersonCamera mainCamera;
+    //private static ThirdPersonCamera mainCamera;
     public static PlayerController ActivePlayer
     {
         get
@@ -23,18 +24,17 @@ public class PlayerSwapManager : MonoBehaviour
 
         // Ensure only the first player starts active
         activePlayerIndex = 0;
+        
         for (int i = 1; i < PlayerController.players.Count; i++)
         {
             PlayerController.players[i].enabled = false;
             if (PlayerController.players[i].CameraFollower != null)
                 PlayerController.players[i].CameraFollower.gameObject.SetActive(false);
         }
+
+        FocusCameraOnActivePlayer();
     }
 
-    public static void RegisterCamera(ThirdPersonCamera camera)
-    {
-        mainCamera = camera;
-    }
 
     private void SpawnPlayer()
     {
@@ -54,25 +54,42 @@ public class PlayerSwapManager : MonoBehaviour
     {
         if (PlayerController.players.Count <= 1) return;
 
-        PlayerController previous = PlayerController.players[activePlayerIndex];
-        previous.enabled = false;
-        if (previous.CameraFollower != null)
-            previous.CameraFollower.gameObject.SetActive(false);
+        // Disable current
+        PlayerController current = ActivePlayer;
+        if (current != null)
+        {
+            current.enabled = false;
+            if (current.CameraFollower != null)
+                current.CameraFollower.gameObject.SetActive(false);
+        }
 
-        activePlayerIndex = (activePlayerIndex + 1) % PlayerController.players.Count;
+        // Move index
+        activePlayerIndex++;
+        if (activePlayerIndex >= PlayerController.players.Count)
+            activePlayerIndex = 0;
 
-        PlayerController next = PlayerController.players[activePlayerIndex];
-        next.enabled = true;
-        FocusCameraOnActivePlayer();
+        // Enable next
+        PlayerController next = ActivePlayer;
+        if (next != null)
+        {
+            next.enabled = true;
+            if (next.CameraFollower != null)
+                next.CameraFollower.gameObject.SetActive(true);
+        }
+
+        current.GetComponent<PlayerInput>().enabled = false;
+        next.GetComponent<PlayerInput>().enabled = true;
     }
 
-    private static void FocusCameraOnActivePlayer()
+    static void FocusCameraOnActivePlayer()
     {
-        if (mainCamera == null) return;
-
         PlayerController active = ActivePlayer;
         if (active == null) return;
 
-        mainCamera.SetTarget(active.transform);
+        if (active.CameraFollower != null)
+        {
+            active.CameraFollower.SetTarget(active.transform);
+            active.CameraFollower.gameObject.SetActive(true);
+        }
     }
 }

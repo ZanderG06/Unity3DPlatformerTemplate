@@ -8,8 +8,8 @@ using UnityEngine;
 public class ThirdPersonCamera : MonoBehaviour 
 {
 	[Header("Target Settings")]
-	[Tooltip("The transform to follow and orbit around (usually the player)")]
-	[SerializeField] private Transform followTarget;
+	//[Tooltip("The transform to follow and orbit around (usually the player)")]
+	//[SerializeField] private Transform target;
 	
 	[Tooltip("The relative position of the camera from the target (x: right/left, y: up/down, z: forward/back)")]
 	[SerializeField] private Vector3 cameraOffset = new Vector3(0f, 3.5f, 7f);
@@ -78,7 +78,7 @@ public class ThirdPersonCamera : MonoBehaviour
     /// </summary>
     private void ValidateComponents()
 	{
-		if (!followTarget)
+		if (!target)
 		{
 			Debug.LogError($"Missing target reference in {nameof(ThirdPersonCamera)} component", this);
 		}
@@ -119,12 +119,12 @@ public class ThirdPersonCamera : MonoBehaviour
 	private void UpdateCameraPosition()
 	{
 		// Update orbit pivot position
-		orbitPivot.position = followTarget.transform.position + orbitPivot.transform.TransformDirection(cameraOffset);
+		orbitPivot.position = target.transform.position + orbitPivot.transform.TransformDirection(cameraOffset);
 		//orbitPivot.Translate(cameraOffset, Space.Self);
 		
 		// Orbit around target based on input
 		float rotationAmount = OrbitInput * orbitSpeed * Time.deltaTime;
-		orbitPivot.RotateAround(followTarget.position, Vector3.up, rotationAmount);
+		orbitPivot.RotateAround(target.position, Vector3.up, rotationAmount);
 		
 		// Smoothly move camera to pivot position
 		transform.position = Vector3.Lerp(
@@ -142,11 +142,11 @@ public class ThirdPersonCamera : MonoBehaviour
 	{
 		if (lookAtSpeed <= 0)
 		{
-			transform.LookAt(followTarget.position);
+			transform.LookAt(target.position);
 			return;
 		}
 
-		Quaternion targetRotation = Quaternion.LookRotation(followTarget.position - transform.position);
+		Quaternion targetRotation = Quaternion.LookRotation(target.position - transform.position);
 		transform.rotation = Quaternion.Slerp(
 			transform.rotation,
 			targetRotation,
@@ -180,7 +180,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     private void Start()
     {
-        PlayerSwapManager.RegisterCamera(this);
+        //PlayerSwapManager.RegisterCamera(this);
     }
 
     public void SetTarget(Transform newTarget)

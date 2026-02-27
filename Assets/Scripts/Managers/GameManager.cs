@@ -88,7 +88,7 @@ public class GameManager : Singleton<GameManager>
         if (playerInputManager)
         {
             //playerInputManager.joinAction = pressToJoin;
-            playerInputManager.EnableJoining();
+            //playerInputManager.EnableJoining();
         }
 
         ToggleShowPressStartToJoin();
@@ -131,6 +131,7 @@ public class GameManager : Singleton<GameManager>
         _instance = null;
     }
 
+    /*
     public void OnPlayerJoined(PlayerInput inputJoined)
     {
         if (inputJoined.TryGetComponent(out PlayerController playerController)) {
@@ -146,6 +147,7 @@ public class GameManager : Singleton<GameManager>
             Camera.main.gameObject.SetActive(true);
         ToggleShowPressStartToJoin();
     }
+    */
 
     public void ToggleShowPressStartToJoin()
     {
