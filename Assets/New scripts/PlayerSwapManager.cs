@@ -65,6 +65,8 @@ public class PlayerSwapManager : MonoBehaviour
         PlayerController next = ActivePlayer;
         if (next != null)
             next.SetControlActive(true);
+
+        FocusCameraOnActivePlayer();
     }
 
     static void FocusCameraOnActivePlayer()
