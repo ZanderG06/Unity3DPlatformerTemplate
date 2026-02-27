@@ -34,7 +34,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnSwap()
     {
-        if(!GameManager.Instance.IsShowingPauseMenu) PlayerSwapManager.SwapToNextPlayer();
+        Debug.Log("Swap pressed");
+        if (!GameManager.Instance.IsShowingPauseMenu) PlayerSwapManager.SwapToNextPlayer();
     }
 
     private void OnDisable()
@@ -183,6 +184,18 @@ public class PlayerController : MonoBehaviour
         characterAnimator.SetFloat(MovementController.AnimationID_DistanceToTarget, moveController.distanceToDestination);
         characterAnimator.SetBool(MovementController.AnimationID_IsGrounded, moveController.isGrounded);
         characterAnimator.SetFloat(MovementController.AnimationID_YVelocity, rb.linearVelocity.y);
+    }
+
+    public void SetControlActive(bool active)
+    {
+        if (playerInput != null)
+            playerInput.enabled = active;
+
+        if (moveController != null)
+            moveController.enabled = active;
+
+        if (CameraFollower != null)
+            CameraFollower.gameObject.SetActive(active);
     }
 
 } 

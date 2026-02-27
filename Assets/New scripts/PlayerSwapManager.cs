@@ -27,7 +27,7 @@ public class PlayerSwapManager : MonoBehaviour
         
         for (int i = 1; i < PlayerController.players.Count; i++)
         {
-            PlayerController.players[i].enabled = false;
+            PlayerController.players[i].SetControlActive(false);
             if (PlayerController.players[i].CameraFollower != null)
                 PlayerController.players[i].CameraFollower.gameObject.SetActive(false);
         }
@@ -54,31 +54,17 @@ public class PlayerSwapManager : MonoBehaviour
     {
         if (PlayerController.players.Count <= 1) return;
 
-        // Disable current
         PlayerController current = ActivePlayer;
         if (current != null)
-        {
-            current.enabled = false;
-            if (current.CameraFollower != null)
-                current.CameraFollower.gameObject.SetActive(false);
-        }
+            current.SetControlActive(false);
 
-        // Move index
         activePlayerIndex++;
         if (activePlayerIndex >= PlayerController.players.Count)
             activePlayerIndex = 0;
 
-        // Enable next
         PlayerController next = ActivePlayer;
         if (next != null)
-        {
-            next.enabled = true;
-            if (next.CameraFollower != null)
-                next.CameraFollower.gameObject.SetActive(true);
-        }
-
-        current.GetComponent<PlayerInput>().enabled = false;
-        next.GetComponent<PlayerInput>().enabled = true;
+            next.SetControlActive(true);
     }
 
     static void FocusCameraOnActivePlayer()
