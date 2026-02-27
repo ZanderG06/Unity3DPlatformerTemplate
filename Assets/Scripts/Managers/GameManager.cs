@@ -17,6 +17,8 @@ public class GameManager : Singleton<GameManager>
     [Tooltip("Layers that contain players")]
     public LayerMask playerMask;
 
+    public GameObject playerPrefab;
+
     private int _coinsCollected;
     public int CoinsCollected {get => _coinsCollected;
         set { 
@@ -58,9 +60,18 @@ public class GameManager : Singleton<GameManager>
 
         if (creationFailed)
             return;
+
         SoundManager.Init();
         Application.quitting += OnQuitting;
-        TryGetComponent(out playerInputManager);
+
+        // Create PlayerInputManager if it doesn't exist
+        if (!TryGetComponent(out playerInputManager))
+        {
+            playerInputManager = gameObject.AddComponent<PlayerInputManager>();
+            playerInputManager.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
+            //playerInputManager.playerPrefab = playerSwapManager.playerPrefab;
+    }
+
         TryGetComponent(out menuHelper);
     }
 

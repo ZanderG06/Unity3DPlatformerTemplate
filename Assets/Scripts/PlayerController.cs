@@ -32,6 +32,11 @@ public class PlayerController : MonoBehaviour
             moveController.enabled = true;
     }
 
+    public void OnSwap()
+    {
+        if(!GameManager.Instance.IsShowingPauseMenu) PlayerSwapManager.SwapToNextPlayer();
+    }
+
     private void OnDisable()
     {
         if (moveController != null)
@@ -87,6 +92,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
         CheckpointManager.TeleportPlayerToCheckpoint(gameObject);
+
+        if(players.IndexOf(this) != 0) enabled = false;
     }
 
     /// <summary>
