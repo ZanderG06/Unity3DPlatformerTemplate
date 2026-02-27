@@ -1,11 +1,12 @@
+using UnityEditor;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class PlayerSwapManager : MonoBehaviour
 {
     public GameObject playerPrefab;
     public static int activePlayerIndex { get; private set; }
 
+    private static ThirdPersonCamera mainCamera;
     public static PlayerController ActivePlayer
     {
         get
@@ -17,45 +18,61 @@ public class PlayerSwapManager : MonoBehaviour
 
     private void Start()
     {
-        // Spawn the initial player
+        SpawnPlayer();
         SpawnPlayer();
 
-        // Spawn the second player
-        SpawnPlayer();
+        // Ensure only the first player starts active
+        activePlayerIndex = 0;
+        for (int i = 1; i < PlayerController.players.Count; i++)
+        {
+            PlayerController.players[i].enabled = false;
+            if (PlayerController.players[i].CameraFollower != null)
+                PlayerController.players[i].CameraFollower.gameObject.SetActive(false);
+        }
+    }
+
+    public static void RegisterCamera(ThirdPersonCamera camera)
+    {
+        mainCamera = camera;
     }
 
     private void SpawnPlayer()
     {
+        // Instantiate inactive so we can set the flag before Start() runs
         GameObject playerObj = Instantiate(playerPrefab);
-        PlayerController playerController = playerObj.GetComponent<PlayerController>();
-        playerController.JoinedThroughGameManager = true;
+        playerObj.SetActive(false);
+
+        if (playerObj.TryGetComponent(out PlayerController pc))
+        {
+            pc.JoinedThroughGameManager = true;
+        }
+
+        playerObj.SetActive(true);
     }
 
     public static void SwapToNextPlayer()
     {
         if (PlayerController.players.Count <= 1) return;
 
-        // Disable the current active player and their camera
-        PlayerController previousPlayer = PlayerController.players[activePlayerIndex];
-        previousPlayer.enabled = false;
-        previousPlayer.CameraFollower.gameObject.SetActive(false);
+        PlayerController previous = PlayerController.players[activePlayerIndex];
+        previous.enabled = false;
+        if (previous.CameraFollower != null)
+            previous.CameraFollower.gameObject.SetActive(false);
 
-        // Switch to the next player
-        activePlayerIndex++;
-        if (activePlayerIndex >= PlayerController.players.Count)
-            activePlayerIndex = 0;
+        activePlayerIndex = (activePlayerIndex + 1) % PlayerController.players.Count;
 
-        // Enable the new active player and their camera  
-        PlayerController.players[activePlayerIndex].enabled = true;
+        PlayerController next = PlayerController.players[activePlayerIndex];
+        next.enabled = true;
         FocusCameraOnActivePlayer();
     }
 
     private static void FocusCameraOnActivePlayer()
     {
-        PlayerController active = ActivePlayer;
-        if (active == null || active.CameraFollower == null) return;
+        if (mainCamera == null) return;
 
-        active.CameraFollower.transform.position = active.transform.position;
-        active.CameraFollower.gameObject.SetActive(true);
+        PlayerController active = ActivePlayer;
+        if (active == null) return;
+
+        mainCamera.SetTarget(active.transform);
     }
 }

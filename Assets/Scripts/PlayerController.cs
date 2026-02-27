@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
         // Cache component references
         moveController = GetComponent<AdvancedMoveController>();
         rb = GetComponent<Rigidbody>();
-        CameraFollower = GetComponentInChildren<ThirdPersonCamera>();
+        //CameraFollower = GetComponentInChildren<ThirdPersonCamera>();
         characterAnimator = GetComponentInChildren<Animator>();
         healthComponent = GetComponent<HealthController>();
 
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
                 playerInput.camera = CameraFollower.GetComponent<Camera>();
             }
             CameraFollower.transform.SetParent(transform.parent);
-            DontDestroyOnLoad(CameraFollower.gameObject);
+            //DontDestroyOnLoad(CameraFollower.gameObject);
         }
 
         DontDestroyOnLoad(gameObject);

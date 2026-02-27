@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 /// <summary>
 /// Controls the camera's movement and rotation to follow a target while handling collision avoidance.
@@ -25,11 +26,13 @@ public class ThirdPersonCamera : MonoBehaviour
 	
 	[Tooltip("Minimum distance the camera can be pushed in when avoiding walls")]
 	[SerializeField] private float minimumDistance = 5f;
-	
-	/// <summary>
-	/// The pivot point used for orbital movement around the target
-	/// </summary>
-	private Transform orbitPivot;
+
+	[SerializeField] private Transform target;
+
+    /// <summary>
+    /// The pivot point used for orbital movement around the target
+    /// </summary>
+    private Transform orbitPivot;
 	
 	/// <summary>
 	/// The original offset value, used to restore camera position after collision
@@ -80,21 +83,21 @@ public class ThirdPersonCamera : MonoBehaviour
 			Debug.LogError($"Missing target reference in {nameof(ThirdPersonCamera)} component", this);
 		}
 	}
-	
-	private void LateUpdate()
-	{
-		if (!followTarget || !enabled) return;
-		
-		HandleCollisionAvoidance();
-		UpdateCameraPosition();
-		UpdateCameraRotation();
-	}
-	
-	/// <summary>
-	/// Adjusts camera distance when colliding with obstacles
-	/// Gradually moves camera in when obstructed and back out when clear
-	/// </summary>
-	private void HandleCollisionAvoidance()
+
+    void LateUpdate()
+    {
+        if (target == null) return;
+
+        // Example follow logic
+        transform.position = target.position + new Vector3(0, 5, -7);
+        transform.LookAt(target);
+    }
+
+    /// <summary>
+    /// Adjusts camera distance when colliding with obstacles
+    /// Gradually moves camera in when obstructed and back out when clear
+    /// </summary>
+    private void HandleCollisionAvoidance()
 	{
 		if (isObstructed)
 		{
@@ -174,4 +177,14 @@ public class ThirdPersonCamera : MonoBehaviour
 			isObstructed = false;
 		}
 	}
+
+    private void Start()
+    {
+        PlayerSwapManager.RegisterCamera(this);
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+    }
 }
