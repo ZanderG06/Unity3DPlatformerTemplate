@@ -8,8 +8,6 @@ using UnityEngine;
 public class ThirdPersonCamera : MonoBehaviour 
 {
 	[Header("Target Settings")]
-	//[Tooltip("The transform to follow and orbit around (usually the player)")]
-	//[SerializeField] private Transform target;
 	
 	[Tooltip("The relative position of the camera from the target (x: right/left, y: up/down, z: forward/back)")]
 	[SerializeField] private Vector3 cameraOffset = new Vector3(0f, 3.5f, 7f);

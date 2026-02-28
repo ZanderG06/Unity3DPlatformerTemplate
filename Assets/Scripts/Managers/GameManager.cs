@@ -22,7 +22,6 @@ public class GameManager : Singleton<GameManager>
     private int _coinsCollected;
     public int CoinsCollected {get => _coinsCollected;
         set { 
-            // Whenever we set the Coins Colected amount we should update the UI.
             if (_coinsCollected != value) {
                     _coinsCollected = value;
                     menuHelper.m_BottomLeftLabel.text = value != 0 ? $"Coins: {value}" : "";
@@ -35,9 +34,7 @@ public class GameManager : Singleton<GameManager>
     private PlayerInputManager playerInputManager;
 
     private int trackPlayerCount = 0;
-    /// <summary>
-    /// This ensures game manager will be created even if no one else calls Instance after the game starts.
-    /// </summary>
+    
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void StartedWithoutGameManager()
     {
@@ -53,7 +50,6 @@ public class GameManager : Singleton<GameManager>
         CheckpointManager.ClearSceneHashCache();
     }
 
-    // Start is called before the first frame update
     protected override void Awake()
     {
         base.Awake();
@@ -69,7 +65,6 @@ public class GameManager : Singleton<GameManager>
         {
             playerInputManager = gameObject.AddComponent<PlayerInputManager>();
             playerInputManager.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
-            //playerInputManager.playerPrefab = playerSwapManager.playerPrefab;
     }
 
         TryGetComponent(out menuHelper);
@@ -78,18 +73,13 @@ public class GameManager : Singleton<GameManager>
 
     public void OnDestroy()
     {
-        if (_instance == this)
-            _instance = null;
+        if (_instance == this) _instance = null;
     }
     protected void Start()
     {
         SceneTransitioner.Instance.NewSceneLoaded.AddListener(CheckpointManager.HandleSceneLoad);
         CheckpointManager.HandleSceneLoad(SceneManager.GetActiveScene().name);
-        if (playerInputManager)
-        {
-            //playerInputManager.joinAction = pressToJoin;
-            //playerInputManager.EnableJoining();
-        }
+        
 
         ToggleShowPressStartToJoin();
 
@@ -131,23 +121,6 @@ public class GameManager : Singleton<GameManager>
         _instance = null;
     }
 
-    /*
-    public void OnPlayerJoined(PlayerInput inputJoined)
-    {
-        if (inputJoined.TryGetComponent(out PlayerController playerController)) {
-            playerController.JoinedThroughGameManager = true;
-        }
-        SceneTransitioner.DisableOtherSceneCameras(true);
-        ToggleShowPressStartToJoin();
-    }
-
-    public void OnPlayerLeft(PlayerInput inputLeft)
-    {
-        if (Camera.main != null && PlayerController.players.Count == 0)
-            Camera.main.gameObject.SetActive(true);
-        ToggleShowPressStartToJoin();
-    }
-    */
 
     public void ToggleShowPressStartToJoin()
     {

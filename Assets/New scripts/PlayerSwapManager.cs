@@ -7,7 +7,6 @@ public class PlayerSwapManager : MonoBehaviour
     public GameObject playerPrefab;
     public static int activePlayerIndex { get; private set; }
 
-    //private static ThirdPersonCamera mainCamera;
     public static PlayerController ActivePlayer
     {
         get
@@ -22,7 +21,6 @@ public class PlayerSwapManager : MonoBehaviour
         SpawnPlayer();
         SpawnPlayer();
 
-        // Ensure only the first player starts active
         activePlayerIndex = 0;
         
         for (int i = 1; i < PlayerController.players.Count; i++)
@@ -38,7 +36,6 @@ public class PlayerSwapManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
-        // Instantiate inactive so we can set the flag before Start() runs
         GameObject playerObj = Instantiate(playerPrefab);
         playerObj.SetActive(false);
 
